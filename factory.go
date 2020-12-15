@@ -31,7 +31,7 @@ func genGitCommand(foo *v1alpha1.ImageBuild) []string {
 
 func genImgCommand(foo *v1alpha1.ImageBuild) []string {
 
-	args := []string{"cd", "/repository", "img", "build", "-t", foo.Spec.ImageName}
+	args := []string{"cd", "/repository", "&&", "img", "build", "-t", foo.Spec.ImageName}
 
 	if foo.Spec.Dockerfile != "" {
 		args = append(args, "-f", foo.Spec.Dockerfile)
