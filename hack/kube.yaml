@@ -1,0 +1,112 @@
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: img.img.k8s.io
+spec:
+  group: img.k8s.io
+  version: v1alpha1
+  names:
+    kind: ImageBuild
+    plural: imagebuilds
+  scope: Namespaced
+  subresources:
+    status: {}
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: img-controller
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: img-controller
+  namespace: img-controller
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: img-controller
+rules:
+- apiGroups:
+  - img.k8s.io
+  resources:
+  - imagebuilds/status
+  verbs:
+  - create
+  - delete
+  - patch
+  - update
+- apiGroups:
+  - img.k8s.io
+  resources:
+  - imagebuilds
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - update
+  - watch
+
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+
+
+---
+apiVersion: v1
+kind: List
+items:
+  - apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRoleBinding
+    metadata:
+      name: img-controller
+    subjects:
+    - kind: ServiceAccount
+      name: img-controller
+      namespace: img-controller
+    roleRef:
+      kind: ClusterRole
+      name: img-controller
+      apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: controller
+  name: controller
+  namespace: img-controller
+spec:
+  selector:
+    matchLabels:
+      app: controller
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: controller
+      name: controller
+    spec:
+      serviceAccountName: img-controller
+      containers:
+        - name: controller
+          image: "quay.io/mudler/img-controller-controller:latest"
+          imagePullPolicy: Always
+          command: ["/usr/bin/img-controller"]

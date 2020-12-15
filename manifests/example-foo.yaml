@@ -1,0 +1,8 @@
+apiVersion: img.k8s.io/v1alpha1
+kind: ImageBuild
+metadata:
+  name: test
+spec:
+  imageName: mocaccino/extra:latest
+  repository: 
+    url: "https://github.com/mocaccinoOS/mocaccino-extra"
