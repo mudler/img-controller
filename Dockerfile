@@ -19,7 +19,7 @@ RUN mkdir -p /run/runc  && chmod 777 /run/runc
 
 RUN useradd -u 1000 -d /img -ms /bin/bash img
 USER img
-WORKDIR /luet
+WORKDIR /img
 COPY --from=builder /img-controller/img-controller /usr/bin/img-controller
-RUN chmod -R 777 /luet
+RUN chmod -R 777 /img
 ENTRYPOINT "/usr/bin/img-controller"
