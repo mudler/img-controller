@@ -107,6 +107,6 @@ spec:
       serviceAccountName: img-controller
       containers:
         - name: controller
-          image: "quay.io/mudler/img-controller-controller:latest"
+          image: "quay.io/mudler/img-controller:latest"
           imagePullPolicy: Always
           command: ["/usr/bin/img-controller"]
